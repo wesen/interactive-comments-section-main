@@ -48,7 +48,14 @@ const DeleteButton = ({ onClick }) => {
       aria-label="Delete"
     >
       <img className="object-contain w-4" src="/icon-delete.svg" alt="" />
-      <a className="text-body font-medium text-soft-red" href="#">
+      <a
+        className="text-body font-medium text-soft-red"
+        href="#"
+        onClick={(e) => {
+          e.preventDefault()
+          onClick()
+        }}
+      >
         Delete
       </a>
     </div>
@@ -98,6 +105,7 @@ const Post = (props) => {
   const { author, date, avatar, body, replyingTo, replies } = props
   const { currentUser, fetchCurrentUser } = useCurrentUser()
   const [showReply, setShowReply] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
 
   useEffect(() => fetchCurrentUser(), [])
   const isPostFromCurrentUser =
@@ -137,7 +145,11 @@ const Post = (props) => {
           <div className="flex flex-row justify-end gap-4">
             {isPostFromCurrentUser ? (
               <>
-                <DeleteButton />
+                <DeleteButton
+                  onClick={() => {
+                    setShowDeleteModal(true)
+                  }}
+                />
                 <EditButton />
               </>
             ) : (
@@ -157,6 +169,13 @@ const Post = (props) => {
             <PostList comments={replies ?? []} />
           </div>
         </div>
+      ) : null}
+      {showDeleteModal ? (
+        <ModalDelete
+          closeModal={() => {
+            setShowDeleteModal(false)
+          }}
+        />
       ) : null}
     </div>
   )
@@ -185,7 +204,9 @@ function PostList(props) {
 
 function ReplyForm({ className }) {
   const { currentUser, fetchCurrentUser } = useCurrentUser()
+
   useEffect(() => fetchCurrentUser(), [])
+
   if (currentUser) {
     const author = currentUser.username
     const avatar = currentUser.image.png ?? ''
@@ -223,6 +244,78 @@ function ReplyForm({ className }) {
   }
 }
 
+function ModalDelete({ closeModal }) {
+  let _node = null
+  const handleCancel = () => {
+    console.log('CANCEL')
+    closeModal()
+  }
+  const handleDelete = () => {
+    console.log('DELETE')
+    closeModal()
+  }
+  return (
+    <>
+      <div
+        className="z-50
+          flex items-center justify-center
+          fixed inset-0
+          outline-none
+          overflow-x-hidden overflow-y-auto
+          "
+        onClick={(e) => {
+          e.preventDefault()
+          if (!_node.contains(e.target)) {
+            handleCancel()
+          }
+        }}
+      >
+        <div
+          ref={(node) => {
+            _node = node
+          }}
+          className="relative w-auto my-6 mx-auto max-w-sm bg-white rounded rounded-xl"
+        >
+          <div className="p-6 flex flex-col justify-between gap-4">
+            <h2 className="text-heading-lg font-medium">Delete comment</h2>
+            <p className="text-body text-grayish-blue">
+              Are you sure you want to delete this comment? This will remove the
+              comment and {"can't"} be undone.
+            </p>
+            <div className="flex flex-row gap-4 mt-1">
+              <button
+                className="
+                    rounded rounded-xl bg-grayish-blue text-white
+                    uppercase font-medium font-body
+                     p-4 w-1/2"
+                onClick={(e) => {
+                  e.preventDefault()
+                  handleCancel()
+                }}
+              >
+                No, cancel
+              </button>
+              <button
+                className="
+                    rounded rounded-xl bg-soft-red text-white
+                    uppercase font-medium font-body
+                     p-4 w-1/2"
+                onClick={(e) => {
+                  e.preventDefault()
+                  handleDelete()
+                }}
+              >
+                Yes, Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+    </>
+  )
+}
+
 export default function Home() {
   const [comments, setComments] = useState([])
   useEffect(() => {
@@ -233,6 +326,11 @@ export default function Home() {
 
   return (
     <div className="bg-very-light-gray  overflow-auto">
+      <div
+        // className="fixed hidden inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
+        className="hidden"
+        id="my-modal"
+      ></div>
       <div className="w-[343px] mx-auto my-8">
         <PostList comments={comments} />
         <ReplyForm className="mt-4" />
