@@ -76,7 +76,18 @@ const ReplyButton = ({ onClick }) => {
       aria-label="Reply"
     >
       <img className="object-contain w-5" src="/icon-reply.svg" alt="" />
-      <a className="text-body font-medium text-moderate-blue" href="#">
+      <a
+        className="text-body font-medium text-moderate-blue"
+        href="#"
+        onClick={
+          onClick
+            ? (e) => {
+                e.preventDefault()
+                onClick()
+              }
+            : null
+        }
+      >
         Reply
       </a>
     </div>
@@ -86,9 +97,12 @@ const ReplyButton = ({ onClick }) => {
 const Post = (props) => {
   const { author, date, avatar, body, replyingTo, replies } = props
   const { currentUser, fetchCurrentUser } = useCurrentUser()
+  const [showReply, setShowReply] = useState(false)
+
   useEffect(() => fetchCurrentUser(), [])
   const isPostFromCurrentUser =
     author === ((currentUser && currentUser.username) ?? '')
+
   const [likes, setLikes] = useState(props.likes)
   return (
     <div>
@@ -127,11 +141,16 @@ const Post = (props) => {
                 <EditButton />
               </>
             ) : (
-              <ReplyButton />
+              <ReplyButton
+                onClick={() => {
+                  setShowReply(!showReply)
+                }}
+              />
             )}
           </div>
         </div>
       </section>
+      {showReply ? <ReplyForm className="mt-4" /> : null}
       {replies.length > 0 ? (
         <div className=" pt-4">
           <div className="pl-4 border-l">
@@ -164,6 +183,46 @@ function PostList(props) {
   )
 }
 
+function ReplyForm({ className }) {
+  const { currentUser, fetchCurrentUser } = useCurrentUser()
+  useEffect(() => fetchCurrentUser(), [])
+  if (currentUser) {
+    const author = currentUser.username
+    const avatar = currentUser.image.png ?? ''
+
+    const isPostFromCurrentUser =
+      author === ((currentUser && currentUser.username) ?? '')
+    return (
+      <div>
+        <section
+          className={`
+        ${className || ''}
+       flex flex-col gap-4
+       p-4
+       bg-white rounded rounded-xl overflow-hidden
+       font-rubik
+       `}
+        >
+          <textarea className="w-full h-32 border rounded-lg text-body text-grayish-blue p-4 resize-none">
+            Add a comment...
+          </textarea>
+          <div className="flex flex-row items-center justify-between">
+            <img className="w-8" src={`${avatar}`} alt={`${author} avatar`} />
+            <button
+              aria-label="Send"
+              className="bg-moderate-blue text-white text-body font-medium py-4 px-8 uppercase rounded rounded-xl"
+            >
+              Send
+            </button>
+          </div>
+        </section>
+      </div>
+    )
+  } else {
+    return <></>
+  }
+}
+
 export default function Home() {
   const [comments, setComments] = useState([])
   useEffect(() => {
@@ -176,6 +235,7 @@ export default function Home() {
     <div className="bg-very-light-gray  overflow-auto">
       <div className="w-[343px] mx-auto my-8">
         <PostList comments={comments} />
+        <ReplyForm className="mt-4" />
       </div>
     </div>
   )
