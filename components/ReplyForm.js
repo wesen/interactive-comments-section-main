@@ -6,14 +6,12 @@ import { Button } from './Buttons'
 export function ReplyForm({ className }) {
   const { currentUser, fetchCurrentUser } = useCurrentUser()
 
-  useEffect(() => fetchCurrentUser(), [])
+  useEffect(() => fetchCurrentUser(), [fetchCurrentUser])
 
   if (currentUser) {
     const author = currentUser.username
     const avatar = currentUser.image.png ?? ''
 
-    const isPostFromCurrentUser =
-      author === ((currentUser && currentUser.username) ?? '')
     let avatarImage = (
       <img
         className="w-8 h-8 desktop:w-10 desktop:h-10"
