@@ -1,6 +1,6 @@
 import { useCurrentUser } from '../src/contexts/CurrentUser'
 import { useEffect, useState } from 'react'
-import { LikeButton } from '../component/LikeButton'
+import { LikeButton } from './LikeButton'
 import { Button, DeleteButton, EditButton, ReplyButton } from './Buttons'
 import MediaQuery from 'react-responsive'
 import { ReplyForm } from './ReplyForm'
