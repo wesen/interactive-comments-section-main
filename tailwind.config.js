@@ -3,11 +3,11 @@ module.exports = {
     './pages/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
   ],
-  screens: {
-    sm: '375px',
-    lg: '1440px',
-  },
   theme: {
+    screens: {
+      mobile: '375px',
+      desktop: '1440px',
+    },
     extend: {
       colors: {
         'dark-blue': '#334253',
