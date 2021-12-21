@@ -1,6 +1,7 @@
 import { useCurrentUser } from '../src/contexts/CurrentUser'
 import { useEffect } from 'react'
 import MediaQuery from 'react-responsive'
+import { Button } from './Buttons'
 
 export function ReplyForm({ className }) {
   const { currentUser, fetchCurrentUser } = useCurrentUser()
@@ -20,18 +21,16 @@ export function ReplyForm({ className }) {
         alt={`${author} avatar`}
       />
     )
-    let sendButton = (
-      <button
-        aria-label="Send"
-        className="bg-moderate-blue text-white text-body font-medium py-4 px-8 uppercase rounded rounded-xl"
-      >
-        Send
-      </button>
-    )
+    let sendButton = <Button name="Send" />
     let textarea = (
-      <textarea className="w-full h-32 border rounded-lg text-body text-grayish-blue p-4 resize-none">
-        Add a comment...
-      </textarea>
+      <textarea
+        className="w-full h-32 border
+      rounded-lg border focus:border-moderate-blue border-light-gray
+       text-body focus:border-moderate-blue placeholder:text-grayish-blue text-dark-blue p-4 resize-none
+      focus:outline-none
+      "
+        placeholder="Add a comment..."
+      />
     )
     return (
       <div>
@@ -53,6 +52,7 @@ export function ReplyForm({ className }) {
               {sendButton}
             </div>
           </MediaQuery>
+
           <MediaQuery minWidth={1440}>
             {avatarImage}
             {textarea}

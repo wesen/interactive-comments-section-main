@@ -1,16 +1,47 @@
 import { useCurrentUser } from '../src/contexts/CurrentUser'
 import { useEffect, useState } from 'react'
 import { LikeButton } from '../component/LikeButton'
-import { DeleteButton, EditButton, ReplyButton } from './Buttons'
+import { Button, DeleteButton, EditButton, ReplyButton } from './Buttons'
 import MediaQuery from 'react-responsive'
 import { ReplyForm } from './ReplyForm'
 import { DeleteModal } from './DeleteModal'
+import * as PropTypes from 'prop-types'
+
+function PostBody(props) {
+  return (
+    <p className="text-body text-grayish-blue font-normal">
+      {props.replyingTo !== undefined ? (
+        <span className="mr-1 text-moderate-blue font-medium">
+          @{props.replyingTo}
+        </span>
+      ) : null}
+      {props.body}
+    </p>
+  )
+}
+
+function PostInfoRow({ author, avatar, date, postFromCurrentUser }) {
+  return (
+    <div className="flex flex-row justify-start items-center gap-4">
+      <img className="w-8" src={`${avatar}`} alt={`${author} avatar`} />
+      <p className="font-medium text-heading-md text-dark-blue">{author}</p>
+      {postFromCurrentUser ? (
+        <div className="bg-moderate-blue rounded px-2 py-1 text-white text-flair">
+          you
+        </div>
+      ) : null}
+      <p className="font-body text-grayish-blue">{date}</p>
+    </div>
+  )
+}
 
 const Post = (props) => {
   const { author, date, avatar, body, replyingTo, replies } = props
   const { currentUser, fetchCurrentUser } = useCurrentUser()
   const [showReply, setShowReply] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [isEditMode, setEditMode] = useState(false)
+  console.log(isEditMode ? 'EDIT' : 'NO_EDIT')
 
   useEffect(() => fetchCurrentUser(), [])
   const isPostFromCurrentUser =
@@ -39,7 +70,11 @@ const Post = (props) => {
               setShowDeleteModal(true)
             }}
           />
-          <EditButton />
+          <EditButton
+            onClick={() => {
+              setEditMode(true)
+            }}
+          />
         </>
       ) : (
         <ReplyButton
@@ -52,28 +87,37 @@ const Post = (props) => {
   )
 
   let infoRow = (
-    <div className="flex flex-row justify-start items-center gap-4">
-      <img className="w-8" src={`${avatar}`} alt={`${author} avatar`} />
-      <p className="font-medium text-heading-md text-dark-blue">{author}</p>
-      {isPostFromCurrentUser ? (
-        <div className="bg-moderate-blue rounded px-2 py-1 text-white text-flair">
-          you
-        </div>
-      ) : null}
-      <p className="font-body text-grayish-blue">{date}</p>
-    </div>
+    <PostInfoRow
+      avatar={avatar}
+      author={author}
+      postFromCurrentUser={isPostFromCurrentUser}
+      date={date}
+    />
   )
 
-  let postBody = (
-    <p className="text-body text-grayish-blue font-normal">
-      {replyingTo !== undefined ? (
-        <span className="mr-1 text-moderate-blue font-medium">
-          @{replyingTo}
-        </span>
-      ) : null}
-      {body}
-    </p>
+  let postBody = isEditMode ? (
+    <div className="w-full flex flex-col justify-between items-end gap-4">
+      <textarea
+        className="w-full h-32
+        placeholder
+        border border-light-gray focus:border-moderate-blue desktop:hover:border-moderate-blue rounded-lg
+        text-body text-dark-blue p-4 resize-none
+        focus:outline-none focus:border-moderate-blue
+        "
+      >
+        {body}
+      </textarea>
+      <Button
+        name="Update"
+        onClick={() => {
+          setEditMode(false)
+        }}
+      />
+    </div>
+  ) : (
+    <PostBody replyingTo={replyingTo} body={body} />
   )
+
   return (
     <div>
       <section
@@ -85,7 +129,7 @@ const Post = (props) => {
       >
         <MediaQuery minWidth={1440}>
           {likeButton}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 w-full">
             <div className="flex flex-row justify-between">
               {infoRow}
               {buttonBar}
