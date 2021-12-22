@@ -7,7 +7,7 @@ const fetcher = (url) => fetch(url).then((res) => res.json())
 export default function Home() {
   const [comments, setComments] = useState([])
   useEffect(() => {
-    fetcher('/api/hello').then(({ comments }) => {
+    fetcher('/api/comments').then(({ comments }) => {
       setComments(comments)
     })
   }, [])
