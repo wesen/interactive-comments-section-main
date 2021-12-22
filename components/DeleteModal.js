@@ -1,4 +1,4 @@
-export function DeleteModal({ onCancel, onConfirm: onDelete }) {
+export function DeleteModal({ onCancel, onDelete }) {
   let _node = null
   const handleCancel = () => {
     console.log('CANCEL')
@@ -41,6 +41,8 @@ export function DeleteModal({ onCancel, onConfirm: onDelete }) {
                 className="
                     rounded rounded-xl bg-grayish-blue text-white
                     uppercase font-medium font-body
+                    desktop:hover:bg-light-gray
+                    desktop:hover:text-dark-blue
                      p-4 w-1/2"
                 onClick={(e) => {
                   e.preventDefault()
@@ -53,6 +55,7 @@ export function DeleteModal({ onCancel, onConfirm: onDelete }) {
                 className="
                     rounded rounded-xl bg-soft-red text-white
                     uppercase font-medium font-body
+                    desktop:hover:bg-pale-red
                      p-4 w-1/2"
                 onClick={(e) => {
                   e.preventDefault()

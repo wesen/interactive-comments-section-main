@@ -5,7 +5,7 @@ export function LikeButton({ likes, onClickMinus, onClickPlus }) {
         flex flex-row
         justify-between items-center
         p-2 px-3 w-100px
-        desktop:h-100px desktop:w-8 desktop:px-6 desktop:w-none desktop:flex-col
+        desktop:h-100px desktop:w-8 desktop:px-6 desktop:pt-4 desktop:w-none desktop:flex-col
         bg-very-light-gray rounded-lg
         "
     >

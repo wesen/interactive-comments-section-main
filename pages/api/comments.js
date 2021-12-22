@@ -29,8 +29,6 @@ const handleCreateComment = async function (req, res) {
     created_at: new Date(),
   })
 
-  let { topLevelComments } = await getAllComments()
-
   if (error !== undefined && error !== null) {
     res.status(500).send({
       message: `Could not insert new comment`,
@@ -41,7 +39,7 @@ const handleCreateComment = async function (req, res) {
 
   res.status(200).json({
     currentUser: cleanupDbUser(singleUser),
-    comments: topLevelComments,
+    comments: await getAllComments(),
   })
 }
 
