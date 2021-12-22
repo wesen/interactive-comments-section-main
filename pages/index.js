@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ReplyForm } from '../components/ReplyForm'
 import { PostList } from '../components/Post'
+import { supabase } from '../src/supabase'
 
 const fetcher = (url) => fetch(url).then((res) => res.json())
 
@@ -8,6 +9,7 @@ export default function Home() {
   const [comments, setComments] = useState([])
   useEffect(() => {
     fetcher('/api/comments').then(({ comments }) => {
+      console.log('comments', comments)
       setComments(comments)
     })
   }, [])

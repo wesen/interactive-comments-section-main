@@ -6,7 +6,7 @@ import { Button } from './Buttons'
 export function ReplyForm({ className }) {
   const { currentUser, fetchCurrentUser } = useCurrentUser()
 
-  useEffect(() => fetchCurrentUser(), [fetchCurrentUser])
+  useEffect(() => fetchCurrentUser(), [])
 
   if (currentUser) {
     const author = currentUser.username
