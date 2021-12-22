@@ -1,10 +1,11 @@
 import { useCurrentUser } from '../src/contexts/CurrentUser'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import MediaQuery from 'react-responsive'
 import { Button } from './Buttons'
 
-export function ReplyForm({ className }) {
+export function ReplyForm({ className, onSubmit, content }) {
   const { currentUser, fetchCurrentUser } = useCurrentUser()
+  const [areaContent, setAreaContent] = useState(content || '')
 
   useEffect(() => fetchCurrentUser(), [])
 
@@ -19,7 +20,19 @@ export function ReplyForm({ className }) {
         alt={`${author} avatar`}
       />
     )
-    let sendButton = <Button name="Send" />
+    let sendButton = (
+      <Button
+        name="Send"
+        onClick={() => {
+          if (onSubmit) {
+            const res = onSubmit(areaContent)
+            if (res) {
+              setAreaContent('')
+            }
+          }
+        }}
+      />
+    )
     let textarea = (
       <textarea
         className="w-full h-32 border
@@ -28,6 +41,10 @@ export function ReplyForm({ className }) {
       focus:outline-none
       "
         placeholder="Add a comment..."
+        onChange={(e) => {
+          setAreaContent(e.target.value)
+        }}
+        value={areaContent}
       />
     )
     return (

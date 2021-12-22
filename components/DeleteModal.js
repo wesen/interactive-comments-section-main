@@ -1,12 +1,12 @@
-export function DeleteModal({ closeModal }) {
+export function DeleteModal({ onCancel, onConfirm: onDelete }) {
   let _node = null
   const handleCancel = () => {
     console.log('CANCEL')
-    closeModal()
+    onCancel()
   }
   const handleDelete = () => {
     console.log('DELETE')
-    closeModal()
+    onDelete()
   }
   return (
     <>

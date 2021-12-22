@@ -5,7 +5,6 @@ import { Button, DeleteButton, EditButton, ReplyButton } from './Buttons'
 import MediaQuery from 'react-responsive'
 import { ReplyForm } from './ReplyForm'
 import { DeleteModal } from './DeleteModal'
-import * as PropTypes from 'prop-types'
 
 function PostBody(props) {
   return (
@@ -41,6 +40,7 @@ const Post = (props) => {
   const [showReply, setShowReply] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [isEditMode, setEditMode] = useState(false)
+  const [updateContent, setUpdateContent] = useState(body)
   console.log(isEditMode ? 'EDIT' : 'NO_EDIT')
 
   useEffect(() => fetchCurrentUser(), [])
@@ -104,15 +104,12 @@ const Post = (props) => {
         text-body text-dark-blue p-4 resize-none
         focus:outline-none focus:border-moderate-blue
         "
-      >
-        {body}
-      </textarea>
-      <Button
-        name="Update"
-        onClick={() => {
-          setEditMode(false)
+        value={updateContent}
+        onChange={(e) => {
+          setUpdateContent(e.target.value)
         }}
       />
+      <Button name="Update" onClick={onHandleUpdate()} />
     </div>
   ) : (
     <PostBody replyingTo={replyingTo} body={body} />
@@ -156,9 +153,10 @@ const Post = (props) => {
       ) : null}
       {showDeleteModal ? (
         <DeleteModal
-          closeModal={() => {
+          onCancel={() => {
             setShowDeleteModal(false)
           }}
+          onDelete={handleDelete}
         />
       ) : null}
     </div>

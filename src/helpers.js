@@ -19,7 +19,7 @@ export const getSingleUser = async function () {
   const { data: singleUser, error: userError } = await supabase
     .from('users')
     .select()
-    .eq('id', 3)
+    .eq('id', 2)
     .single()
   return singleUser
 }
@@ -30,7 +30,7 @@ export const cleanupDbComment = (c) => {
   return {
     id: c.id,
     content: c.content,
-    createdAt: timeAgo.format(createdAt),
+    createdAt: createdAt && timeAgo.format(createdAt),
     score: c.score,
     replyingTo: c.replying_to?.user_id?.username,
     replyToId: c.reply_to_id,
@@ -40,10 +40,10 @@ export const cleanupDbComment = (c) => {
 
 export const commentToDbComment = (c) => {
   return {
-    id: c.id,
     content: c.content,
     score: 0,
-    reply_to_id: c.replyingToId,
+    reply_to_id: c.replyingToId || null,
+    user_id: c.userId,
     post_id: 1,
   }
 }
@@ -52,9 +52,11 @@ export let getAllComments = async function () {
   const { data: allComments, error: commentError } = await supabase
     .from('comments')
     .select(
-      `id, content, score, created_at,  user: user_id(id, username), reply_to_id, replying_to: reply_to_id(user_id(username))`,
+      `id, content, score, created_at, user: user_id(id, username), reply_to_id, replying_to: reply_to_id(user_id(username))`,
     )
+    .order('created_at', { ascending: true })
 
+  console.log(allComments)
   const cleanedComments = allComments.map(cleanupDbComment)
 
   let commentsByParentId = cleanedComments.reduce((res, comment) => {

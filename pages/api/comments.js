@@ -18,13 +18,18 @@ const handleGetAllComments = async function (res) {
 
 const handleCreateComment = async function (req, res) {
   const singleUser = await getSingleUser()
-  const data = JSON.parse(req.body)
+  const data = req.body
+
+  const comment = commentToDbComment({ ...data, userId: singleUser.id })
+  console.log('Inserting user', comment)
+
+  const { data: result, error } = await supabase.from('comments').insert({
+    ...comment,
+    user_id: singleUser.id,
+    created_at: new Date(),
+  })
 
   let { topLevelComments } = await getAllComments()
-
-  const { data: result, error } = await supabase
-    .from('users')
-    .insert(commentToDbComment(data))
 
   if (error !== undefined && error !== null) {
     res.status(500).send({
