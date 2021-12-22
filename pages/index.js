@@ -8,7 +8,6 @@ export default function Home() {
   const [comments, setComments] = useState([])
   useEffect(() => {
     fetcher('/api/comments').then(({ comments }) => {
-      console.log('comments', comments)
       setComments(comments)
     })
   }, [])
@@ -40,7 +39,7 @@ export default function Home() {
         // className="fixed hidden inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
         className="hidden"
         id="my-modal"
-      ></div>
+      />
       <div className="w-[343px] desktop:w-[730px] mx-auto my-8">
         <PostList comments={comments} />
         <ReplyForm className="mt-4" onSubmit={onFormSubmit} />
