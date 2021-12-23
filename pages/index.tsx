@@ -18,7 +18,7 @@ export async function getServerSideProps() {
   }
 }
 
-export default function Home({ comments }) {
+export default function Home({ comments }: { comments: any }) {
   const [state, dispatch] = useReducer<Reducer<any, any>>(reducer, {
     comments: comments,
   })
