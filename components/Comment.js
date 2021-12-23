@@ -17,7 +17,7 @@ import { ACTIONS } from './reducer'
 function CommentBody({ body, replyingTo }) {
   return (
     <p className="text-body text-grayish-blue font-normal">
-      {replyingTo !== undefined ? (
+      {replyingTo != null ? (
         <span className="mr-1 text-moderate-blue font-medium">
           @{replyingTo}
         </span>
