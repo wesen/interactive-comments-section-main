@@ -1,11 +1,9 @@
 export function DeleteModal({ onCancel, onDelete }) {
   let _node = null
   const handleCancel = () => {
-    console.log('CANCEL')
     onCancel()
   }
   const handleDelete = () => {
-    console.log('DELETE')
     onDelete()
   }
   return (

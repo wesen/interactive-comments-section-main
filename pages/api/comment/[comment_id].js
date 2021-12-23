@@ -1,11 +1,12 @@
 import { supabase } from '../../../src/supabase'
-import { getAllComments } from '../../../src/helpers'
+import { getAllComments, getDbComment } from '../../../src/helpers'
 
 const deleteComment = async (comment_id, res) => {
   const { data, error } = await supabase
     .from('comments')
     .delete()
     .eq('id', comment_id)
+  console.log('deleted', data)
   if (error !== undefined && error !== null) {
     res.status(500).send({
       message: `Could not delete comment: ${comment_id}`,
@@ -13,23 +14,40 @@ const deleteComment = async (comment_id, res) => {
     })
     return
   }
-  res.status(200).json(await getAllComments())
+  res.status(200).json({ deleted_id: comment_id })
 }
 
-const updateComment = async (comment_id, content, res) => {
+const updateComment = async (comment_id, { content }, res) => {
   const { data, error } = await supabase
     .from('comments')
     .update({ content })
     .eq('id', comment_id)
 
+  console.log('updateComment', data)
+  if (data.length < 1) {
+    res.status(500).send({
+      message: `Could not insert new comment`,
+      error: 'No result returned from DB',
+    })
+  }
+
   if (error !== undefined && error !== null) {
     res.status(500).send({
-      message: `Could not delete comment: ${comment_id}`,
+      message: `Could not update comment: ${comment_id}`,
       error,
     })
     return
   }
-  res.status(200).json(await getAllComments())
+
+  let updatedComment = await getDbComment(data[0].id)
+  if (updatedComment == null) {
+    res.status(500).send({
+      message: `Could not retrieve newly created comment`,
+      error: `Could not retrieve newly created comment`,
+    })
+    return
+  }
+  res.status(200).json(updatedComment)
 }
 
 export default async function handler(req, res) {

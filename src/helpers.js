@@ -48,6 +48,22 @@ export const commentToDbComment = (c) => {
   }
 }
 
+export const getDbComment = async function (id) {
+  const { data, error } = await supabase
+    .from('comments')
+    .select(
+      `id, content, score, created_at, user: user_id(id, username), reply_to_id, replying_to: reply_to_id(user_id(username))`,
+    )
+    .eq('id', id)
+    .single()
+
+  if (data == null || error != null) {
+    return null
+  } else {
+    return cleanupDbComment(data)
+  }
+}
+
 export let getAllComments = async function () {
   const { data: allComments, error: commentError } = await supabase
     .from('comments')
@@ -56,7 +72,6 @@ export let getAllComments = async function () {
     )
     .order('created_at', { ascending: true })
 
-  console.log(allComments)
   const cleanedComments = allComments.map(cleanupDbComment)
 
   let commentsByParentId = cleanedComments.reduce((res, comment) => {

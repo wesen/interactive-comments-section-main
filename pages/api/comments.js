@@ -4,6 +4,7 @@ import {
   getAllComments,
   commentToDbComment,
   getSingleUser,
+  getDbComment,
 } from '../../src/helpers'
 
 const handleGetAllComments = async function (res) {
@@ -21,7 +22,6 @@ const handleCreateComment = async function (req, res) {
   const data = req.body
 
   const comment = commentToDbComment({ ...data, userId: singleUser.id })
-  console.log('Inserting user', comment)
 
   const { data: result, error } = await supabase.from('comments').insert({
     ...comment,
@@ -29,18 +29,29 @@ const handleCreateComment = async function (req, res) {
     created_at: new Date(),
   })
 
-  if (error !== undefined && error !== null) {
+  if (error != null) {
     res.status(500).send({
       message: `Could not insert new comment`,
       error,
     })
     return
   }
+  if (result.length < 1) {
+    res.status(500).send({
+      message: `Could not insert new comment`,
+      error: 'No result returned from DB',
+    })
+  }
 
-  res.status(200).json({
-    currentUser: cleanupDbUser(singleUser),
-    comments: await getAllComments(),
-  })
+  let newComment = await getDbComment(result[0].id)
+  if (newComment == null) {
+    res.status(500).send({
+      message: `Could not retrieve newly created comment`,
+      error: `Could not retrieve newly created comment`,
+    })
+    return
+  }
+  res.status(200).json(newComment)
 }
 
 export default async function handler(req, res) {

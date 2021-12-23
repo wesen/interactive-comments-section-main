@@ -1,4 +1,4 @@
-import { getAllComments } from '../../../../src/helpers'
+import { getAllComments, getDbComment } from '../../../../src/helpers'
 import { supabase } from '../../../../src/supabase'
 
 export default async function handler(req, res) {
@@ -79,6 +79,13 @@ export default async function handler(req, res) {
     })
   }
 
-  let { commentsById } = await getAllComments()
-  res.status(200).json(commentsById.get(comment_id))
+  let updatedComment = await getDbComment(comment_id)
+  if (updatedComment == null) {
+    res.status(500).send({
+      message: `Could not retrieve newly created comment`,
+      error: `Could not retrieve newly created comment`,
+    })
+    return
+  }
+  res.status(200).json(updatedComment)
 }

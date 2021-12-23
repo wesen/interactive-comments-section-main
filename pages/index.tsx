@@ -2,7 +2,7 @@ import { Reducer, useEffect, useReducer } from 'react'
 import { ReplyForm } from '../components/ReplyForm'
 import { CommentList } from '../components/Comment'
 import { createComment } from '../src/apiClient'
-import reducer, { ACTIONS } from '../components/reducer'
+import { reducer, ACTIONS } from '../components/reducer'
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
@@ -19,10 +19,14 @@ export default function Home() {
 
   const onFormSubmit = async (content: string) => {
     createComment(content)
-      .then((comments) => {
-        dispatch({ type: ACTIONS.SET_COMMENTS, payload: comments })
+      .then((comment) => {
+        dispatch({
+          type: ACTIONS.ADD_COMMENT,
+          payload: { ...comment, replies: [] },
+        })
       })
       .catch((error) => {
+        console.log('error', error)
         alert(`Could not create comment: ${error.message || error}`)
       })
   }

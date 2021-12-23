@@ -1,56 +1,46 @@
-export const createComment = (content) => {
-  return fetch('/api/comments', {
+const apiCall = (url, body = undefined, options = {}) => {
+  return fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ content: content }),
+    body: body && JSON.stringify(body),
+    ...options,
+  }).then(
+    (res) =>
+      new Promise(async (resolve, reject) => {
+        let body = await res.json()
+        if (res.status === 200 && body.error == null) {
+          resolve(body)
+        } else {
+          reject(body.error || body)
+        }
+      }),
+  )
+}
+
+export const createComment = (content) => {
+  return apiCall('/api/comments', {
+    content: content,
   })
-    .then((res) => res.json())
-    .then(
-      (data) =>
-        new Promise((resolve, reject) => {
-          if (data.error !== undefined) {
-            reject(data.error)
-          } else {
-            resolve(data.comments)
-          }
-        }),
-    )
 }
 
 export const updateComment = (id, content) => {
-  console.log('POST body content', content)
-  return fetch(`/api/comment/${id}`, {
-    method: 'POST',
-    body: content,
+  return apiCall(`/api/comment/${id}`, {
+    content,
   })
-    .then((res) => res.json())
-    .then(
-      (data) =>
-        new Promise((resolve, reject) => {
-          if (data.error !== undefined) {
-            reject(data.error)
-          } else {
-            resolve(data.comments)
-          }
-        }),
-    )
 }
 
-export const deleteComment = (id, content) => {
-  return fetch(`/api/comment/${id}`, {
+export const upvoteComment = (id) => {
+  return apiCall(`/api/comment/${id}/upvote`)
+}
+
+export const downvoteComment = (id) => {
+  return apiCall(`/api/comment/${id}/downvote`)
+}
+
+export const deleteComment = (id) => {
+  return apiCall(`/api/comment/${id}`, null, {
     method: 'DELETE',
   })
-    .then((res) => res.json())
-    .then(
-      (data) =>
-        new Promise((resolve, reject) => {
-          if (data.error !== undefined) {
-            reject(data.error)
-          } else {
-            resolve(data.comments)
-          }
-        }),
-    )
 }

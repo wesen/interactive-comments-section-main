@@ -6,7 +6,12 @@ import MediaQuery from 'react-responsive'
 import { ReplyForm } from './ReplyForm'
 import { DeleteModal } from './DeleteModal'
 import * as PropTypes from 'prop-types'
-import { deleteComment, updateComment } from '../src/apiClient'
+import {
+  deleteComment,
+  downvoteComment,
+  updateComment,
+  upvoteComment,
+} from '../src/apiClient'
 import { ACTIONS } from './reducer'
 
 function CommentBody({ body, replyingTo }) {
@@ -100,29 +105,43 @@ const Comment = ({ comment, dispatch }) => {
   const isPostFromCurrentUser =
     author === ((currentUser && currentUser.username) ?? '')
 
-  const [likes, setLikes] = useState(score)
-
   const handleDownVote = async () => {
-    setLikes(likes - 1)
+    downvoteComment(id)
+      .then((comment) => {
+        dispatch({ type: ACTIONS.UPDATE_COMMENT, payload: comment })
+        setEditMode(false)
+      })
+      .catch((error) => {
+        alert(`Could not downvote comment: ${error.message || error}`)
+        setEditMode(false)
+      })
   }
   const handleUpVote = async () => {
-    setLikes(likes + 1)
+    upvoteComment(id)
+      .then((comment) => {
+        dispatch({ type: ACTIONS.UPDATE_COMMENT, payload: comment })
+        setEditMode(false)
+      })
+      .catch((error) => {
+        alert(`Could not upvote comment: ${error.message || error}`)
+        setEditMode(false)
+      })
   }
   const handleUpdate = async (content) => {
     updateComment(id, content)
-      .then((comments) => {
-        console.log(comments)
-        dispatch({ type: ACTIONS.SET_COMMENTS, payload: comments })
+      .then((comment) => {
+        dispatch({ type: ACTIONS.UPDATE_COMMENT, payload: comment })
+        setEditMode(false)
       })
       .catch((error) => {
-        alert(`Could not create comment: ${error.message || error}`)
+        alert(`Could not update comment: ${error.message || error}`)
+        setEditMode(false)
       })
-    setEditMode(false)
   }
   const handleDelete = async () => {
     deleteComment(id)
       .then((comments) => {
-        dispatch({ type: ACTIONS.SET_COMMENTS, payload: comments })
+        dispatch({ type: ACTIONS.DELETE_COMMENT, payload: { id } })
       })
       .catch((error) => {
         alert(`Could not create comment: ${error.message || error}`)
@@ -131,7 +150,7 @@ const Comment = ({ comment, dispatch }) => {
 
   let likeButton = (
     <LikeButton
-      likes={likes}
+      likes={score}
       onClickMinus={handleDownVote}
       onClickPlus={handleUpVote}
     />
@@ -193,7 +212,7 @@ const Comment = ({ comment, dispatch }) => {
       {replies.length > 0 ? (
         <div className=" pt-4">
           <div className="pl-4 border-l">
-            <CommentList comments={replies ?? []} />
+            <CommentList dispatch={dispatch} comments={replies ?? []} />
           </div>
         </div>
       ) : null}
