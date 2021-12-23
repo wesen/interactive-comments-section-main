@@ -55,7 +55,6 @@ export default function Home({ comments }: { comments: any }) {
           id="my-modal"
         />
         <div className="w-[343px] desktop:w-[730px] mx-auto my-8">
-          <h1>{state.comments.length} comments</h1>
           <CommentList comments={state.comments} dispatch={dispatch} />
           <ReplyForm className="mt-4" onSubmit={onFormSubmit} content="" />
         </div>

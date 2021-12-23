@@ -262,9 +262,6 @@ export function CommentList({ comments, dispatch, depth = 0 }) {
   comments = comments ?? []
   return (
     <div className="flex flex-col gap-4">
-      <h1>
-        {comments.length} COMMENTS depth: {depth}
-      </h1>
       {comments.map((comment) => {
         return (
           <Comment
