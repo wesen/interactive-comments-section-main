@@ -93,7 +93,7 @@ CommentButtonBar.propTypes = {
   onReply: PropTypes.func,
 }
 const Comment = ({ comment, dispatch, depth }) => {
-  const { id, user, date, content, replyingTo, replies, score } = comment
+  const { id, user, createdAt, content, replyingTo, replies, score } = comment
   const [author, avatar] = [user.username, user.image.png]
 
   const { currentUser, fetchCurrentUser } = useCurrentUser()
@@ -189,7 +189,7 @@ const Comment = ({ comment, dispatch, depth }) => {
       avatar={avatar}
       author={author}
       postFromCurrentUser={isPostFromCurrentUser}
-      date={date}
+      date={createdAt}
     />
   )
 
@@ -208,7 +208,7 @@ const Comment = ({ comment, dispatch, depth }) => {
 
   return (
     <div>
-      <section
+      <div
         className="
        flex flex-col gap-4 desktop:gap-6 desktop:flex-row
        bg-white rounded rounded-xl overflow-hidden
@@ -233,7 +233,7 @@ const Comment = ({ comment, dispatch, depth }) => {
             {buttonBar}
           </div>
         </MediaQuery>
-      </section>
+      </div>
       {showReply ? <ReplyForm onSubmit={handleReply} className="mt-4" /> : null}
       {replies.length > 0 ? (
         <div className=" pt-4">
@@ -262,6 +262,9 @@ export function CommentList({ comments, dispatch, depth = 0 }) {
   comments = comments ?? []
   return (
     <div className="flex flex-col gap-4">
+      <h1>
+        {comments.length} COMMENTS depth: {depth}
+      </h1>
       {comments.map((comment) => {
         return (
           <Comment

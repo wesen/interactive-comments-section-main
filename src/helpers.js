@@ -30,7 +30,7 @@ export const cleanupDbComment = (c) => {
     content: c.content,
     createdAt: createdAt && timeAgo.format(createdAt),
     score: c.score,
-    replyingTo: c.replying_to?.user_id?.username,
+    replyingTo: c.replying_to?.user_id?.username || null,
     replyToId: c.reply_to_id,
     user: cleanupDbUser(c.user),
   }
