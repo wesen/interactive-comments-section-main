@@ -32,7 +32,7 @@ export default function Home() {
   }
 
   return (
-    <div className="bg-very-light-gray  overflow-auto">
+    <div className="bg-very-light-gray h-screen  overflow-auto">
       <div
         // className="fixed hidden inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
         className="hidden"

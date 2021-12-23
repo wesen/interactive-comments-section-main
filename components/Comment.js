@@ -92,7 +92,7 @@ CommentButtonBar.propTypes = {
   onEdit: PropTypes.func,
   onReply: PropTypes.func,
 }
-const Comment = ({ comment, dispatch }) => {
+const Comment = ({ comment, dispatch, depth }) => {
   const { id, user, date, content, replyingTo, replies, score } = comment
   const [author, avatar] = [user.username, user.image.png]
 
@@ -199,6 +199,13 @@ const Comment = ({ comment, dispatch }) => {
     <CommentBody replyingTo={replyingTo} body={content} />
   )
 
+  let depthStyling = ''
+  if (depth < 1) {
+    depthStyling = 'pl-4 border-l'
+  } else if (depth < 5) {
+    depthStyling = 'desktop:pl-4 desktop:border-l'
+  }
+
   return (
     <div>
       <section
@@ -208,7 +215,7 @@ const Comment = ({ comment, dispatch }) => {
        font-rubik
        p-4 desktop:p-6"
       >
-        <MediaQuery minWidth={1440}>
+        <MediaQuery minWidth={1024}>
           {likeButton}
           <div className="flex flex-col gap-4 w-full">
             <div className="flex flex-row justify-between">
@@ -218,7 +225,7 @@ const Comment = ({ comment, dispatch }) => {
             {commentBody}
           </div>
         </MediaQuery>
-        <MediaQuery maxWidth={1440 - 1}>
+        <MediaQuery maxWidth={1024 - 1}>
           {infoRow}
           {commentBody}
           <div className="flex flex-row justify-between items-center">
@@ -230,8 +237,12 @@ const Comment = ({ comment, dispatch }) => {
       {showReply ? <ReplyForm onSubmit={handleReply} className="mt-4" /> : null}
       {replies.length > 0 ? (
         <div className=" pt-4">
-          <div className="pl-4 border-l">
-            <CommentList dispatch={dispatch} comments={replies ?? []} />
+          <div className={depthStyling}>
+            <CommentList
+              dispatch={dispatch}
+              comments={replies ?? []}
+              depth={depth + 1}
+            />
           </div>
         </div>
       ) : null}
@@ -247,13 +258,18 @@ const Comment = ({ comment, dispatch }) => {
   )
 }
 
-export function CommentList({ comments, dispatch }) {
+export function CommentList({ comments, dispatch, depth = 0 }) {
   comments = comments ?? []
   return (
     <div className="flex flex-col gap-4">
       {comments.map((comment) => {
         return (
-          <Comment key={comment.id} comment={comment} dispatch={dispatch} />
+          <Comment
+            key={comment.id}
+            comment={comment}
+            dispatch={dispatch}
+            depth={depth}
+          />
         )
       })}
     </div>
