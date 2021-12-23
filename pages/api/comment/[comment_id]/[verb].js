@@ -11,21 +11,30 @@ export default async function handler(req, res) {
   comment_id = parseInt(comment_id)
 
   if (verb === 'reply') {
-    const body = JSON.parse(req.body)
+    const { content } = req.body
     const { data, error } = await supabase.from('comments').insert({
-      user_id: 3,
-      content: body.content,
+      user_id: 2,
+      content: content,
       score: 0,
-      created_at: Date.now(),
+      created_at: new Date(),
       post_id: 1,
       reply_to_id: comment_id,
     })
-    if (error !== undefined) {
+    if (error != null) {
       res.status(500).send({
         message: `Could not insert new reply`,
+        error,
       })
       return
     }
+    if (data.length < 1) {
+      res.status(500).send({
+        message: `Could not insert new comment`,
+        error: 'No result returned from DB',
+      })
+      return
+    }
+    comment_id = data[0].id
   } else if (verb === 'upvote') {
     const { data: comment, error: getCommentError } = await supabase
       .from('comments')
@@ -44,7 +53,7 @@ export default async function handler(req, res) {
       .from('comments')
       .update({ score: comment.score + 1 })
       .eq('id', comment_id)
-    if (error !== undefined && error !== null) {
+    if (error != null) {
       res.status(500).send({
         message: `Could not upvote comment ${comment_id}`,
         error,
@@ -67,9 +76,10 @@ export default async function handler(req, res) {
       .from('comments')
       .update({ score: Math.max(0, comment.score - 1) })
       .eq('id', comment_id)
-    if (error !== undefined && error !== null) {
+    if (error != null) {
       res.status(500).send({
         message: `Could not upvote comment ${comment_id}`,
+        error,
       })
       return
     }

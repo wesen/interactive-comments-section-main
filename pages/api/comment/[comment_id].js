@@ -23,12 +23,12 @@ const updateComment = async (comment_id, { content }, res) => {
     .update({ content })
     .eq('id', comment_id)
 
-  console.log('updateComment', data)
   if (data.length < 1) {
     res.status(500).send({
       message: `Could not insert new comment`,
       error: 'No result returned from DB',
     })
+    return
   }
 
   if (error !== undefined && error !== null) {

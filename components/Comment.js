@@ -9,6 +9,7 @@ import * as PropTypes from 'prop-types'
 import {
   deleteComment,
   downvoteComment,
+  replyComment,
   updateComment,
   upvoteComment,
 } from '../src/apiClient'
@@ -148,6 +149,24 @@ const Comment = ({ comment, dispatch }) => {
       })
   }
 
+  const handleReply = async (replyContent) => {
+    replyComment(id, replyContent)
+      .then((comment) => {
+        dispatch({
+          type: ACTIONS.ADD_COMMENT,
+          payload: {
+            ...comment,
+            replies: [],
+          },
+        })
+        setShowReply(false)
+      })
+      .catch((error) => {
+        alert(`Could not reply to comment: ${error.message || error}`)
+        setShowReply(false)
+      })
+  }
+
   let likeButton = (
     <LikeButton
       likes={score}
@@ -208,7 +227,7 @@ const Comment = ({ comment, dispatch }) => {
           </div>
         </MediaQuery>
       </section>
-      {showReply ? <ReplyForm className="mt-4" /> : null}
+      {showReply ? <ReplyForm onSubmit={handleReply} className="mt-4" /> : null}
       {replies.length > 0 ? (
         <div className=" pt-4">
           <div className="pl-4 border-l">

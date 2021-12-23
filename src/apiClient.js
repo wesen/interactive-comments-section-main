@@ -44,3 +44,9 @@ export const deleteComment = (id) => {
     method: 'DELETE',
   })
 }
+
+export const replyComment = (id, replyContent) => {
+  return apiCall(`/api/comment/${id}/reply`, {
+    content: replyContent,
+  })
+}
