@@ -1,7 +1,5 @@
 import { supabase } from './supabase'
-import TimeAgo from 'javascript-time-ago'
-
-const timeAgo = new TimeAgo('en-US')
+import { timeAgo } from './timeAgo'
 
 export const cleanupDbUser = (singleUser) => {
   if (singleUser === undefined || singleUser === null) {
