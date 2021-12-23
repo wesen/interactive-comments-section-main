@@ -49,7 +49,7 @@ export function ReplyForm({ className, onSubmit, content }) {
     )
     return (
       <div>
-        <section
+        <div
           className={`
         ${className || ''}
        flex flex-col gap-4 
@@ -73,7 +73,7 @@ export function ReplyForm({ className, onSubmit, content }) {
             {textarea}
             {sendButton}
           </MediaQuery>
-        </section>
+        </div>
       </div>
     )
   } else {
