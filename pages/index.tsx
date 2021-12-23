@@ -49,6 +49,7 @@ export default function Home({ comments }: { comments: any }) {
         <title>Interactive comment section</title>
       </Head>
       <main className="bg-very-light-gray h-screen  overflow-auto">
+        <h1 className="hidden">Interactive comment section</h1>
         <div
           // className="fixed hidden inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
           className="hidden"
