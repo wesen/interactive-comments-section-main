@@ -6,6 +6,8 @@ module.exports = {
   enabled: process.env.NODE_ENV === 'production',
   theme: {
     screens: {
+      xs: '534px',
+      md: '1024px',
       mobile: '375px',
       desktop: '1024px',
     },

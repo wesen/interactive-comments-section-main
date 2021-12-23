@@ -2,7 +2,6 @@ import { useCurrentUser } from '../src/contexts/CurrentUser'
 import { useEffect, useState } from 'react'
 import { LikeButton } from './LikeButton'
 import { Button, DeleteButton, EditButton, ReplyButton } from './Buttons'
-import MediaQuery from 'react-responsive'
 import { ReplyForm } from './ReplyForm'
 import { DeleteModal } from './DeleteModal'
 import * as PropTypes from 'prop-types'
@@ -215,24 +214,32 @@ const Comment = ({ comment, dispatch, depth }) => {
        font-rubik
        p-4 desktop:p-6"
       >
-        <MediaQuery minWidth={1024}>
-          {likeButton}
-          <div className="flex flex-col gap-4 w-full">
-            <div className="flex flex-row justify-between">
-              {infoRow}
-              {buttonBar}
-            </div>
-            {commentBody}
-          </div>
-        </MediaQuery>
-        <MediaQuery maxWidth={1024 - 1}>
-          {infoRow}
-          {commentBody}
-          <div className="flex flex-row justify-between items-center">
-            {likeButton}
+        <div
+          className="grid grid-cols-2 gap-4
+          auto-cols-auto
+        desktop:grid-cols-[min-content_repeat(2,_minmax(0,1fr))] desktop:-ml-1
+          items-center
+        "
+        >
+          <div className="col-span-2 desktop:col-span-1">{infoRow}</div>
+          <div
+            className="row-start-3 col-start-2
+          desktop:col-start-3 desktop:row-start-1
+          justify-self-end
+          "
+          >
             {buttonBar}
           </div>
-        </MediaQuery>
+          <div className="row-start-2 col-span-2">{commentBody}</div>
+          <div
+            className="
+          row-start-3
+          desktop:col-start-1 desktop:row-start-1 desktop:row-span-2
+          "
+          >
+            {likeButton}
+          </div>
+        </div>
       </div>
       {showReply ? <ReplyForm onSubmit={handleReply} className="mt-4" /> : null}
       {replies.length > 0 ? (
