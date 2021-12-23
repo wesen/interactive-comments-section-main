@@ -75,13 +75,15 @@ export const ReplyButton = ({ onClick }) => {
   )
 }
 
-export function Button({ name, onClick }) {
+export function Button({ name, onClick, className }) {
   return (
     <button
       aria-label={name}
       onClick={onClick}
-      className="bg-moderate-blue text-white text-body font-medium py-4 px-8 uppercase rounded rounded-xl
-        desktop:hover:bg-light-grayish-blue"
+      className={`${
+        className || ''
+      } bg-moderate-blue text-white text-body font-medium py-4 px-8 uppercase rounded rounded-xl
+        desktop:hover:bg-light-grayish-blue`}
     >
       {name}
     </button>
